@@ -1,13 +1,26 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {IProduct} from './product';
 @Component({
 selector: 'app-products',
 templateUrl: './product-list.component.html',
-
+styleUrls: ['./product-list-component.css']
 
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
     pageTitle = 'Book List';
-    products =[
+    imageWidth = 30;
+    imageMargin = 2;
+    showImage = false;
+    _listFilter: string;
+    get listFilter(): string {
+       return this._listFilter;
+    }
+    set listFilter(value) {
+      this._listFilter = value;
+      this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products; // I am not understanding this line
+   }
+    filteredProducts: IProduct[];
+    products: IProduct[] = [
         {
             'productId': 1,
             "productName": "Leaf Rake",
@@ -58,7 +71,22 @@ export class ProductListComponent {
             "starRating": 4.6,
             "imageUrl": "https://openclipart.org/image/300px/svg_to_png/120337/xbox-controller_01.png"
           }
-        ]
+        ];
+        constructor() {
+          this.filteredProducts = this.products;
+          this._listFilter = 'cart';
+        }
 
-    
+    toggleImage(): void {
+      this.showImage = !this.showImage;
+    }
+    performFilter(filterBy: string): IProduct[] {
+      filterBy = filterBy.toLocaleLowerCase();
+      return this.products.filter((product: IProduct) =>
+        product.productName.toLocaleLowerCase().indexOf(filterBy) !== -1);
+    }
+  
+    ngOnInit(): void {
+      console.log('Hello');
+    }
 }
